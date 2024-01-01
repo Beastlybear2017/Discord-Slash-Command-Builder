@@ -1,3 +1,6 @@
+<script lang="ts" context="module">
+  
+</script>
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Highlight from "svelte-highlight";
@@ -17,9 +20,55 @@
     import CommandOption from "./CommandOption.svelte";
     import Icon from "./Icon.svelte";
     import Localization from "./Localization.svelte";
+  import App from "../App.svelte";
 
-    export let command: Partial<ApplicationCommand>;
-    $: command_json = JSON.stringify(command, null, 4);
+    export let command: Partial<ApplicationCommand>;  
+    $: command_json = JSON.stringify(removeFalsy(command) , null, 4)
+
+    function removeFalsy(object, copy?: boolean) {
+        if (typeof object == "string") {
+            object = JSON.parse(object)
+        }
+
+        Object
+        .entries(object)
+        .forEach(([k, v]) => {
+            if (v && typeof v === 'object' && copy) {
+                removeFalsy(v, true);
+            }
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false || v === "" && k != "name" && k != "description") {
+                if (v[k] === "") {
+                    delete object[k]
+                    return
+                }
+                if (Array.isArray(object)) {
+                    object.splice(k, 1);
+                } else {
+                    delete object[k];
+                }
+            }
+        });
+
+        if (copy && object.options && Array.isArray(object.options)) {
+            object.options.forEach((option, index) => {
+                console.log(option.name)
+                if (option.name == "") {
+                    document.querySelectorAll('label$=" *"').forEach(element => {
+                    })
+                    throw new Error(`Command ${index + 1} Does Not Have A Name`);
+                } 
+                if (option.description == "") {
+                    console.log('No Desc')
+                }
+                if (option.description && option.name) {
+                    object.options = object.options.filter(obj => {return obj !== option})
+                }                
+            });
+    }
+        return object
+    };
+
+
 
     const dispatch = createEventDispatcher();
 
@@ -30,8 +79,24 @@
         command.options = [...command.options, { name: "", description: "" }];
     }
 
-    function copyJSONToClipboard() {
-        navigator.clipboard.writeText(command_json);
+    async function copyJSONToClipboard() {
+        let commandJson
+        try {
+          commandJson =  removeFalsy(command_json, true) 
+        } catch (error) {
+            console.log(error)
+            return            
+        }
+        navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
+
+        var missing = {
+            command_name: "Command Name",
+
+        }
+
+        if (!commandJson.name || !commandJson.description) {
+            // alert("Command Name is required.")
+        }
     }
 
     let commandTypes = buildOptionsFromEnum(ApplicationCommandType);
@@ -46,7 +111,17 @@
             permissions.map((p) => p.value)
         );
     }
+
+    if (!command.dm_permission) {
+        delete command.dm_permission
+    }
+
+    let value = ""
+    $: value = value.replace(/[^0-9]/g, '')
+
 </script>
+
+
 
 <svelte:head>
     {@html atomOneDark}
@@ -61,14 +136,14 @@
                 on:click={() => dispatch("remove")}
             >
                 <Icon name="delete" class="delete-icon" />
-            </div>
+            </div>   
         </div>
         <div class="content" slot="content">
-            <Textbox label="GuildID" bind:value={command.guild_id} />
-            <Textbox label="Name" bind:value={command.name} maxlength={32} />
+            <Textbox label="GuildID" bind:value />
+            <Textbox label="Name *" bind:value={command.name} maxlength={32} />
             <Localization bind:localizations={command.name_localizations} />
             <Textbox
-                label="Description"
+                label="Description *"
                 bind:value={command.description}
                 maxlength={100}
             />
@@ -103,14 +178,14 @@
                                 if (command.options.length === 0) {
                                     command.options = undefined;
                                 } else {
-                                    command.options = option.options;
-                                }
+                                    command.options = command.options;
+                                }                
                             }}
                         />
                     {/each}
                 {/if}
             </div>
-            <div class="button-bar">
+            <div class="button-bar" id="add-command-button">
                 <button on:click={addOption}>
                     <Icon name="add" class="btn-icon" />Add Option
                 </button>
@@ -138,6 +213,8 @@
         .content {
             padding: 1em;
         }
+
+
     }
 
     .command-options {

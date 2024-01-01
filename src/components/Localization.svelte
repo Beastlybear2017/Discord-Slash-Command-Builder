@@ -91,6 +91,7 @@
         .label {
             margin: 0.5em 0 0.3em 0;
             display: block;
+            width: 7em;
         }
 
         .locale {

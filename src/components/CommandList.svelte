@@ -28,3 +28,16 @@
         </button>
     </div>
 </div>
+
+<style>
+
+    .command-list-container {
+        max-height: 50em;
+    }
+
+    button {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+</style>

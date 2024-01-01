@@ -31,8 +31,8 @@
             <Icon name="delete" class="delete-icon" />
         </div>
     </div>
-    <Textbox label="Name" bind:value={choice.name} />
-    <Textbox label="Value" bind:value={choice.value} {input_type} />
+    <Textbox label="Name  *" bind:value={choice.name} />
+    <Textbox label="Value  *" bind:value={choice.value} {input_type} />
 </div>
 
 <style lang="scss">

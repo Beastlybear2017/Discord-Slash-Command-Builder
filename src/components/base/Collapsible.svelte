@@ -1,3 +1,4 @@
+
 <script lang="ts">
     import Icon from "../Icon.svelte";
 
@@ -6,10 +7,14 @@
     $: icon = collapsed ? "chevron_right" : "chevron_down";
 </script>
 
+
 <div class="collapsible">
     <div
         class="collapsible-header"
-        on:click={() => (collapsed = !collapsed)}
+        on:click={(e) => {
+            if (e.target.tagName !== "DIV") return
+            collapsed = !collapsed
+        }}
         class:collapsed-header={collapsed}
     >
         <Icon name={icon} class="collapse-icon" />

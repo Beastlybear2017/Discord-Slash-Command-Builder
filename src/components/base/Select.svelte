@@ -147,6 +147,7 @@
 
     .input-label {
         display: inline-block;
+        width: 7em;
     }
 
     .select:not(.unlabeled) {
