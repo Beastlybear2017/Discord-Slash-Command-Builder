@@ -86,6 +86,10 @@
     }
 
     option.required = true
+
+    let name = ""
+    $: name = name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
+    $: option.name = name
 </script>
 
 <div class="command-option-container">
@@ -101,7 +105,7 @@
         </div>
         <div class="content" slot="content">
             <div class="command-option-info">
-                <Textbox label="Name *" bind:value={option.name} maxlength={32} />
+                <Textbox label="Name *" bind:value={name} maxlength={32} />
                 <Localization bind:localizations={option.name_localizations} />
                 <Textbox
                     label="Description *"

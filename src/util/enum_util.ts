@@ -1,7 +1,7 @@
-export function buildOptionsFromEnum(enumType) {
+export function buildOptionsFromEnum(enumType, perms?: Boolean) {
     let options = [];
     const entries = Object.entries(enumType);
-    entries.splice(0, entries.length / 2);
+    if (!perms) entries.splice(0, entries.length / 2);
     for (let entry of entries) {
         let display = entry[0].toLowerCase();
         const split = display.split("_");

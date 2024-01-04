@@ -9,8 +9,7 @@
     import {
         ApplicationCommand,
         ApplicationCommandType,
-        build_permissions,
-        Permission,
+        Permissions
     } from "../models/app_command";
     import { buildOptionsFromEnum } from "../util/enum_util";
     import Checkbox from "./base/Checkbox.svelte";
@@ -36,35 +35,19 @@
             if (v && typeof v === 'object' && copy) {
                 removeFalsy(v, true);
             }
-            if (v && typeof v === 'object' && !Object.keys(v).length || v === false || v === "" && k != "name" && k != "description") {
+            console.log(v[k])
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false || v === "" && k != "name" && k != "description" && k != "value" || v.name == "" && v.value == "" && copy || k == "type" && v == "1") {
                 if (v[k] === "") {
                     delete object[k]
                     return
                 }
                 if (Array.isArray(object)) {
-                    object.splice(k, 1);
+                    object.splice(Number(k), 1);
                 } else {
                     delete object[k];
                 }
             }
         });
-
-        if (copy && object.options && Array.isArray(object.options)) {
-            object.options.forEach((option, index) => {
-                console.log(option.name)
-                if (option.name == "") {
-                    document.querySelectorAll('label$=" *"').forEach(element => {
-                    })
-                    throw new Error(`Command ${index + 1} Does Not Have A Name`);
-                } 
-                if (option.description == "") {
-                    console.log('No Desc')
-                }
-                if (option.description && option.name) {
-                    object.options = object.options.filter(obj => {return obj !== option})
-                }                
-            });
-    }
         return object
     };
 
@@ -104,20 +87,26 @@
     let defaultCommandType = 0;
     $: command.type = commandTypes[defaultCommandType].value;
 
-    let permissions = buildOptionsFromEnum(Permission);
+    let permissions = buildOptionsFromEnum(Permissions, true);
 
     function setPermissions(permissions) {
-        command.default_member_permissions = build_permissions(
-            permissions.map((p) => p.value)
-        );
+        console.log(permissions)
+        command.defaultMemberPermissions = permissions.map((p) => p.value)
+        ;
     }
 
     if (!command.dm_permission) {
         delete command.dm_permission
     }
 
-    let value = ""
-    $: value = value.replace(/[^0-9]/g, '')
+    let guildID = ""
+    $: guildID = guildID.replace(/[^0-9]/g, '')
+    $: command.guild_id = guildID
+
+    let name = ""
+    $: name = name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
+    $: command.name = name
+    
 
 </script>
 
@@ -139,8 +128,8 @@
             </div>   
         </div>
         <div class="content" slot="content">
-            <Textbox label="GuildID" bind:value />
-            <Textbox label="Name *" bind:value={command.name} maxlength={32} />
+            <Textbox label="GuildID" bind:value={guildID} />
+            <Textbox label="Name *" bind:value={name} maxlength={32} />
             <Localization bind:localizations={command.name_localizations} />
             <Textbox
                 label="Description *"
