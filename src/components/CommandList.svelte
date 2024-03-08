@@ -19,8 +19,6 @@
     }
 
     var command_json
-
-
     
     function createCommand() {
         commands = [...commands, { name: "", description: "", dm_permission: false }];

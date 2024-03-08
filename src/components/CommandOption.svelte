@@ -15,6 +15,34 @@
     import Localization from "./Localization.svelte";
 
     export let option: Partial<ApplicationCommandOption>;
+    $: option_json = JSON.stringify(removeFalsy(option) , null, 4)
+
+    function removeFalsy(object: Object, copy?: boolean) {
+        if (typeof object == "string") {
+            object = JSON.parse(object)
+        }
+        Object
+        .entries(object)
+        .forEach(([k, v]) => {
+            if (v && typeof v === 'object' && copy) {
+                removeFalsy(v, true);
+            }
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false && (k !== "dm_permission") || v === "" && k != "name" && k != "description" && k != "value" || v?.name == "" && v?.value == "" && copy || k == "type" && v == "1") {
+                // console.log(`${v.name} | ${v.value}`)
+                if (v[k] === "") {
+                    delete object[k]
+                    return
+                }
+                if (Array.isArray(object)) {
+                    object.splice(Number(k), 1);
+                } else {
+                    delete object[k];
+                }
+                // object[dm_permission] = dm_perms
+            }
+        });
+        return object
+    };
 
     const dispatch = createEventDispatcher();
 
@@ -87,9 +115,11 @@
 
     option.required = true
 
-    let name = ""
-    $: name = name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
-    $: option.name = name
+    option.name = option.name || ""
+    $: option.name = option?.name?.toLowerCase().replace(/[^a-z0-9-_]/g, '')
+
+    let advanced = Boolean("")
+    $: advanced = advanced || false
 </script>
 
 <div class="command-option-container">
@@ -104,18 +134,26 @@
                 <Icon name="delete" class="delete-icon" />
             </div>
         </div>
+  
         <div class="content" slot="content">
+
             <div class="command-option-info">
-                <Textbox label="Name *" bind:value={name} maxlength={32} />
+                <Checkbox
+                    label="Advanced Options"
+                    bind:value={advanced}
+                />      
+                <Textbox label="Name *" bind:value={option.name} maxlength={32} />
+                {#if advanced}
                 <Localization bind:localizations={option.name_localizations} />
+                {/if}
                 <Textbox
                     label="Description *"
                     bind:value={option.description}
                     maxlength={100}
                 />
-                <Localization
-                    bind:localizations={option.description_localizations}
-                />
+                {#if advanced}
+                <Localization bind:localizations={option.description_localizations} />
+                {/if}
                 <Checkbox label="Required" bind:value={option.required} />
                 <Select
                     label="Type"

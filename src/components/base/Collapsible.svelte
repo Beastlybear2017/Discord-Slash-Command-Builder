@@ -12,7 +12,7 @@
     <div
         class="collapsible-header"
         on:mouseup={(e) => {
-            if ((e.target.tagName !== "DIV" && e.target.tagName !== "H2") || e.button !== 0) return
+            if ((e.target.tagName !== "DIV" && e.target.tagName !== "H2" && e.target.tagName !== "H3") || e.button !== 0) return
             collapsed = !collapsed
         }}
         class:collapsed-header={collapsed}

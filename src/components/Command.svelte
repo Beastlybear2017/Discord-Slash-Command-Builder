@@ -31,7 +31,6 @@
         if (typeof object == "string") {
             object = JSON.parse(object)
         }
-
         Object
         .entries(object)
         .forEach(([k, v]) => {
