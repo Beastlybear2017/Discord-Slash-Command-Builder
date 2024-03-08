@@ -30,7 +30,7 @@
     function updateCommands() {
         command_json = JSON.stringify(commands, null, 4).replace("[", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "")
         command_json.pop()
-        command_json = command_json.join("\n")
+        command_json = command_json.join("\n").replace("    ]", "]")
     }
 
     // console.log(getCommands())
