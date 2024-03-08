@@ -10,6 +10,10 @@
 </div>
 
 <style>
+    ::selection {
+        background-color: transparent;
+    }
+
     .input-label {
         display: inline-block;
     }

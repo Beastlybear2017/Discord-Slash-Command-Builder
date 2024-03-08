@@ -99,6 +99,7 @@
             <div
                 class="delete-icon-wrapper"
                 on:click={() => dispatch("remove")}
+                on:keyup={() => {}}
             >
                 <Icon name="delete" class="delete-icon" />
             </div>

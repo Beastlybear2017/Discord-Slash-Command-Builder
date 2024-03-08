@@ -50,6 +50,7 @@
             Object.entries(localizations).filter(([key, _]) => key !== locale)
         );
     }
+    if (!localizations) localizations = {}
 </script>
 
 <div class="localization-input">
@@ -70,6 +71,7 @@
                     <div
                         class="delete-locale"
                         on:click={() => deleteLocale(locale)}
+                        on:keyup={() => {}}
                     >
                         <Icon name="delete" class="btn-icon" />
                     </div>
@@ -104,5 +106,9 @@
 
     .delete-locale {
         cursor: pointer;
+    }
+
+    ::selection {
+        background-color: transparent;
     }
 </style>

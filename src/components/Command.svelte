@@ -19,12 +19,15 @@
     import CommandOption from "./CommandOption.svelte";
     import Icon from "./Icon.svelte";
     import Localization from "./Localization.svelte";
-  import App from "../App.svelte";
+    
+    // import { toasts, ToastContainer, FlatToast, BootstrapToast }  from "svelte-toasts";
+
 
     export let command: Partial<ApplicationCommand>;  
     $: command_json = JSON.stringify(removeFalsy(command) , null, 4)
 
-    function removeFalsy(object, copy?: boolean) {
+
+    function removeFalsy(object: Object, copy?: boolean) {
         if (typeof object == "string") {
             object = JSON.parse(object)
         }
@@ -35,8 +38,8 @@
             if (v && typeof v === 'object' && copy) {
                 removeFalsy(v, true);
             }
-            console.log(v[k])
-            if (v && typeof v === 'object' && !Object.keys(v).length || v === false || v === "" && k != "name" && k != "description" && k != "value" || v.name == "" && v.value == "" && copy || k == "type" && v == "1") {
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false && (k !== "dm_permission") || v === "" && k != "name" && k != "description" && k != "value" || v.name == "" && v.value == "" && copy || k == "type" && v == "1") {
+                // console.log(`${v.name} | ${v.value}`)
                 if (v[k] === "") {
                     delete object[k]
                     return
@@ -46,6 +49,7 @@
                 } else {
                     delete object[k];
                 }
+                // object[dm_permission] = dm_perms
             }
         });
         return object
@@ -62,25 +66,28 @@
         command.options = [...command.options, { name: "", description: "" }];
     }
 
-    async function copyJSONToClipboard() {
-        let commandJson
-        try {
-          commandJson =  removeFalsy(command_json, true) 
-        } catch (error) {
-            console.log(error)
-            return            
-        }
-        navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
+    // async function copyJSONToClipboard() {
+    //     let commandJson
+    //     try {
+    //       commandJson =  removeFalsy(command_json, true) 
+    //     } catch (error) {
+    //         console.log(error)
+    //         return            
+    //     }
+    //     navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
 
-        var missing = {
-            command_name: "Command Name",
-
-        }
-
-        if (!commandJson.name || !commandJson.description) {
-            // alert("Command Name is required.")
-        }
-    }
+    //     const toast = toasts.add({
+    //         title: 'Copied',
+    //         description: 'The Commands have been copied to your clipboard :)',
+    //         duration: 3000, // 0 or negative to avoid auto-remove
+    //         placement: 'top-center',
+    //         theme: 'dark',
+    //         type: 'success',
+    //         onClick: () => {},
+    //         onRemove: () => {},
+    //         // component: BootstrapToast, // allows to override toast component/template per toast
+    //     });
+    // }
 
     let commandTypes = buildOptionsFromEnum(ApplicationCommandType);
 
@@ -95,18 +102,18 @@
         ;
     }
 
-    if (!command.dm_permission) {
-        delete command.dm_permission
-    }
+    command.guild_id = command.guild_id 
+    $: command.guild_id = (command?.guild_id?.replace(/[^0-9]/g, '')) || ""
 
-    let guildID = ""
-    $: guildID = guildID.replace(/[^0-9]/g, '')
-    $: command.guild_id = guildID
-
-    let name = ""
-    $: name = name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
-    $: command.name = name
+    command.name = command.name 
+    $: command.name = command.name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
     
+
+    command.dm_permission = command.dm_permission
+    $: command.dm_permission = command.dm_permission || false
+    
+    let advanced = Boolean("")
+    $: advanced = advanced || false
 
 </script>
 
@@ -123,39 +130,52 @@
             <div
                 class="delete-icon-wrapper"
                 on:click={() => dispatch("remove")}
+                on:keyup={() => {}}
             >
                 <Icon name="delete" class="delete-icon" />
             </div>   
         </div>
         <div class="content" slot="content">
-            <Textbox label="GuildID" bind:value={guildID} />
-            <Textbox label="Name *" bind:value={name} maxlength={32} />
-            <Localization bind:localizations={command.name_localizations} />
+            <Checkbox
+                label="Advanced Options"
+                bind:value={advanced}
+            />
+            {#if advanced}
+                <Textbox label="GuildID" bind:value={command.guild_id} />
+            {/if}
+            <Textbox label="Name *" bind:value={command.name} maxlength={32} />
+            {#if advanced}
+                <Localization bind:localizations={command.name_localizations} />
+            {/if}
             <Textbox
                 label="Description *"
                 bind:value={command.description}
                 maxlength={100}
             />
-            <Localization
-                bind:localizations={command.description_localizations}
-            />
+            {#if advanced}
+                <Localization
+                    bind:localizations={command.description_localizations}
+                />
+            {/if}
             <Select
                 label="Type"
                 options={commandTypes}
                 bind:currentIndex={defaultCommandType}
             />
-            <Select
-                label="Permissions"
-                options={permissions}
-                selectionMode="multiple"
-                on:selectionChanged={(event) =>
-                    setPermissions(event.detail.values)}
-            />
-            {#if !command.guild_id}
-                <Checkbox
-                    label="DM Permission"
-                    bind:value={command.dm_permission}
+            {#if advanced}
+                <Select
+                    label="Permissions"
+                    options={permissions}
+                    selectionMode="multiple"
+                    on:selectionChanged={(event) =>
+                        setPermissions(event.detail.values)}
                 />
+                {#if !command.guild_id}
+                    <Checkbox
+                        label="DM Permission"
+                        bind:value={command.dm_permission}
+                    />
+                {/if}
             {/if}
             <div class="command-options">
                 {#if command.options}
@@ -179,12 +199,12 @@
                     <Icon name="add" class="btn-icon" />Add Option
                 </button>
             </div>
-            <div class="output-json-container">
+            <!-- <div class="output-json-container">
                 <Highlight language={json} code={command_json} />
                 <button class="copy-button" on:click={copyJSONToClipboard}>
                     <Icon name="copy" class="btn-icon" />Copy
                 </button>
-            </div>
+            </div> -->
         </div>
     </Collapsible>
 </div>
@@ -210,13 +230,17 @@
         margin: 1em 0;
     }
 
-    .output-json-container {
-        position: relative;
-    }
+    // .output-json-container {
+    //     position: relative;
+    // }
 
-    .copy-button {
-        position: absolute;
-        top: 1em;
-        right: 1em;
+    // .copy-button {
+    //     position: absolute;
+    //     top: 1em;
+    //     right: 1em;
+    // }
+
+    ::selection {
+        background-color: transparent;
     }
 </style>

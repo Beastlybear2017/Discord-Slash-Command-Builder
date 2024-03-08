@@ -80,13 +80,13 @@
     {#if label != undefined}
         <span class="input-label">{label}</span>
     {/if}
-    <div class="select-input" on:click={() => (opened = !opened)}>
+    <div class="select-input" on:mouseup={() => (opened = !opened)} >
         {formattedText}
         <Icon name="chevron_down" class="select-chevron" />
         {#if opened}
             <div class="select-options" bind:this={optionsElements}>
                 {#each options as option, i}
-                    <div class="option" on:click={() => handleSelection(i)}>
+                    <div class="option" on:mouseup={() => handleSelection(i)}>
                         {option.display}
                     </div>
                 {/each}
@@ -96,6 +96,11 @@
 </div>
 
 <style lang="scss">
+
+    ::selection {
+        background-color: transparent;
+    }
+
     .select-input {
         background: var(--background-color-brighter);
         padding: 0.8em;

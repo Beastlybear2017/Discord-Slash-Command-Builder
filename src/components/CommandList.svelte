@@ -1,24 +1,93 @@
+
 <script lang="ts">
+    export function getCommands() {
+        alert("a")
+    }    
+    import { Highlight } from "svelte-highlight";
     import type { ApplicationCommand } from "../models/app_command";
     import Command from "./Command.svelte";
     import Icon from "./Icon.svelte";
-
+    import json from "svelte-highlight/languages/json";
+    import { toasts, ToastContainer, FlatToast, BootstrapToast }  from "svelte-toasts";
+    // import commands from "./Command.svelte"
+    
     let commands: Partial<ApplicationCommand>[] = [];
-
-    function createCommand() {
-        commands = [...commands, { name: "", description: "" }];
-    }
 
     function removeCommand(index: number) {
         commands.splice(index, 1);
         commands = commands;
     }
+
+    var command_json
+
+
+    
+    function createCommand() {
+        commands = [...commands, { name: "", description: "", dm_permission: false }];
+        command_json = JSON.stringify(commands, null, 4).replace("[", "").replace("]", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "").join("\n")
+    }
+
+    function updateCommands() {
+        command_json = JSON.stringify(commands, null, 4).replace("[", "").replace("]", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "").join("\n")
+    }
+    
+
+
+    // console.log(getCommands())
+
+    async function copyJSONToClipboard() {  
+        console.log(command_json)
+        
+        let commandJson
+
+        navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
+
+        const toast = toasts.add({
+            title: 'Copied',
+            description: '',
+            duration: 1500, // 0 or negative to avoid auto-remove
+            placement: 'bottom-right',
+            theme: 'dark',
+            type: 'success',
+            onClick: () => {},
+            onRemove: () => {},
+            // component: BootstrapToast, // allows to override toast component/template per toast
+        });
+    }
+
+    function removeFalsy(object: Object, copy?: boolean) {
+        if (typeof object == "string") {
+            object = JSON.parse(object)
+        }
+
+        Object
+        .entries(object)
+        .forEach(([k, v]) => {
+            if (v && typeof v === 'object' && copy) {
+                removeFalsy(v, true);
+            }
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false && (k !== "dm_permission") || v === "" && k != "name" && k != "description" && k != "value" || v.name == "" && v.value == "" && copy || k == "type" && v == "1") {
+                // console.log(`${v.name} | ${v.value}`)
+                if (v[k] === "") {
+                    delete object[k]
+                    return
+                }
+                if (Array.isArray(object)) {
+                    object.splice(Number(k), 1);
+                } else {
+                    delete object[k];
+                }
+                // object[dm_permission] = dm_perms
+            }
+        });
+        return object
+    };
 </script>
 
-<div class="command-list-container">
+<div class="command-list-container" on:keyup={() => updateCommands()} on:mouseup={async () => {await new Promise(f => setTimeout(f, 10)); updateCommands()}}>
     <div class="command-list">
         {#each commands as command, i}
-            <Command bind:command on:remove={() => removeCommand(i)} />
+            <Command on:remove={() => {removeCommand(i)}} bind:command  />
         {/each}
     </div>
     <div class="button-bar">
@@ -27,6 +96,19 @@
             Add Command
         </button>
     </div>
+    <br>
+    <br>
+    {#if commands[0]}
+        <div class="output-json-container">
+            <Highlight language={json} code={command_json} />
+            <button class="copy-button" on:click={copyJSONToClipboard} >
+                <Icon name="copy" class="btn-icon" />Copy
+            </button>
+        </div>
+    {/if}
+    <ToastContainer let:data={data}>
+        <FlatToast {data} /> <!-- Provider template for your toasts -->
+    </ToastContainer>
 </div>
 
 <style>
@@ -40,4 +122,14 @@
       left: 50%;
       transform: translateX(-50%);
     }
+
+    .output-json-container {
+        position: relative;
+    }
+
+    /* .copy-button {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+    } */
 </style>

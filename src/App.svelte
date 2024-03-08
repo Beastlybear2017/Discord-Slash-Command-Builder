@@ -2,19 +2,27 @@
 	import CommandList from "./components/CommandList.svelte";
 </script>
 
-<main>
-	<h1>Slash Command Builder</h1>
-	<h3>* Are Required Fields</h3>
+<main >
+	<centered>
+		<h1>Slash Command Builder</h1>
+		<h3>* Are Required Fields</h3>
+	</centered>
 	<CommandList />
 </main>
 
 <style lang="scss">
-	h1 {
-		text-align: center;
+
+	::selection {
+		background-color: transparent;
 	}
 
 	h3 {
-		text-align: center;
 		font-size: medium;
 	}
+
+	centered {
+		text-align: center;
+
+	}
+
 </style>

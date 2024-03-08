@@ -27,7 +27,7 @@
 <div class="command-choice-container">
     <div class="container-header">
         <h4 class="heading">Choice</h4>
-        <div class="delete-icon-wrapper" on:click={() => dispatch("remove")}>
+        <div class="delete-icon-wrapper" on:click={() => dispatch("remove")} on:keyup={() => {}}>
             <Icon name="delete" class="delete-icon" />
         </div>
     </div>

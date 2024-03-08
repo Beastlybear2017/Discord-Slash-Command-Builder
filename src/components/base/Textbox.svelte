@@ -10,46 +10,60 @@
     export function handleInput(event) {
         const val = (event.target as HTMLInputElement).value;
         var target_type = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("collapsible-header")[0]?.getElementsByClassName("container-header")[0].getElementsByClassName("heading")[0].innerHTML || event.currentTarget.parentNode.parentNode.parentNode.getElementsByClassName("container-header")[0]?.getElementsByClassName("heading")[0]?.innerHTML || event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("label")[0].innerHTML
-    switch (target_type) {
-        case "Command":
-            target_type = "A Command"
-            break
-        case "Option":
-            target_type = "An Option"
-            break
-        case "Choice":
-            target_type = "A Choice"
-            break
-        case "Localization":
-            target_type = "A Localized"
-    }
+    
+        switch (target_type) {
+            case "Command":
+                target_type = "A Command"
+                break
+            case "Option":
+                target_type = "An Option"
+                break
+            case "Choice":
+                target_type = "A Choice"
+                break
+            case "Localization":
+                target_type = "A Localized"
+        }
+        
 
-    const target_name = String(event.target.name) || String(target_type)
+        const target_name = String(event.target.name) || String(target_type)
 
-    switch (target_name) {
+        switch (target_name) {
             case "Name *": 
-                if (val.match(/(^$)/g) ) {
-                    showError(event, "error", `${target_type} Name is Required`)
-                } else if (val.match(/([A-Z])/g)){
-                    showError(event, "error", `${target_type} Name can not contain Capital Letters`)
-                } else if (val.match(/([^a-z0-9-_])/g)){
-                    showError(event, "error", `${target_type} Name can only contain Letters, Numbers and Dashes`)
-                }else {
-                    showError(event)
-                } 
+                if (target_type !== "A Choice") {
+                    if (val.match(/(^$)/g) ) {
+                        showError(event, "error", `${target_type} Name is Required`)
+                    } else if (val.match(/([A-Z])/g)){
+                        showError(event, "error", `${target_type} Name can not contain Capital Letters`)
+                    } else if (val.match(/([^a-z0-9-_])/g)){
+                        showError(event, "error", `${target_type} Name can only contain Letters, Numbers, Underscores and Dashes`)
+                    } else {
+                        showError(event)
+                    }                     
+                } else {
+                    if (val.match(/(^$)/g) ) {
+                        showError(event, "error", `${target_type} Name is Required`)
+                    } else if (val.replaceAll(" ", "") == "") {
+                        showError(event, "error", `${target_type} Name can not contain only Spaces`)
+                    } else {
+                        showError(event)
+                    }  
+                }
+
                 break;
 
             case "Description *": 
                 if (!val) {
                     showError(event, "error", `${target_type} Description is Required`)
+                } else if (val.replaceAll(" ", "") == "") {
+                    showError(event, "error", `${target_type} Description can not contain only Spaces`)
                 } else {
                     showError(event)
                 }                  
                 break
 
             case "GuildID": 
-                // if (!isFinite(event.data)) {}
-                if (!val.match(/([0-9])+/g)) {
+                if (!val.match(/([0-9])+/g) && val !== " ") {
                     showError(event, "error", "A Guild ID consists of only Numbers")
                 } else {
                     showError(event, "guildID")
@@ -59,6 +73,8 @@
             case "Value *": 
                 if (!val) {
                     showError(event, "error", `${target_type} Value is Required`)
+                } else if (val.replaceAll(" ", "") == "") {
+                    showError(event, "error", `${target_type} Value can not contain only Spaces`)
                 }else {
                     showError(event)
                 }
@@ -107,6 +123,10 @@
 </div>
 
 <style lang="scss">
+
+    .input-label::selection {
+        background-color: transparent;
+    }
 
     .input-label {
         width: 7em;

@@ -26,16 +26,29 @@ export function handleOutEvent(event) {
 
     switch (target_name) {
         case "Name *": 
-            if (val.match(/([^a-z0-9-_])+/g) || (event.target as HTMLInputElement).value.match(/(^$)/g) ) {
-                showError(event, "error", `${target_type} Name is Required`)
+            if (target_type !== "A Choice") {
+                if (val.match(/([^a-z0-9-_])+/g) || (event.target as HTMLInputElement).value.match(/(^$)/g) ) {
+                    showError(event, "error", `${target_type} Name is Required`)
+                } else {
+                    showError(event)
+                }                 
             } else {
-                showError(event)
-            } 
+                if (val.match(/(^$)/g)) {
+                    showError(event, "error", `${target_type} Name is Required`)
+                } else if (val.replace(" ", "") == "") {
+                    showError(event, "error", `${target_type} Name can not contain only Spaces`)
+                } else {
+                    showError(event)
+                }  
+            }
+
             break;
 
         case "Description *": 
             if (!val) {
                 showError(event, "error", `${target_type} Description is Required`)
+            } else if (val.replace(" ", "") == "") {
+                showError(event, "error", `${target_type} Description can not contain only Spaces`)
             } else {
                 showError(event)
             }                  
@@ -49,7 +62,9 @@ export function handleOutEvent(event) {
         case "Value *": 
             if (!val) {
                 showError(event, "error", `${target_type} Value is Required`)
-            }else {
+            } else if (val.replace(" ", "") == "") {
+                showError(event, "error", `${target_type} Value can not contain only Spaces`)
+            } else {
                 showError(event)
             }
             break
