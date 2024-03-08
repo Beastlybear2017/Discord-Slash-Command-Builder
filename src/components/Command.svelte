@@ -97,9 +97,7 @@
     let permissions = buildOptionsFromEnum(Permissions, true);
 
     function setPermissions(permissions) {
-        console.log(permissions)
         command.defaultMemberPermissions = permissions.map((p) => p.value)
-        ;
     }
 
     command.guild_id = command.guild_id 
