@@ -35,12 +35,9 @@
 
     // console.log(getCommands())
 
-    async function copyJSONToClipboard() {  
-        console.log(command_json)
-        
-        let commandJson
+    async function copyJSONToClipboard() { 
 
-        navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
+        navigator.clipboard.writeText(command_json);
 
         const toast = toasts.add({
             title: 'Copied',
