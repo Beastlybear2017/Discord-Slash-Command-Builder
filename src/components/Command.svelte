@@ -38,7 +38,7 @@
             if (v && typeof v === 'object' && copy) {
                 removeFalsy(v, true);
             }
-            if (v && typeof v === 'object' && !Object.keys(v).length || v === false && (k !== "dm_permission") || v === "" && k != "name" && k != "description" && k != "value" || v.name == "" && v.value == "" && copy || k == "type" && v == "1") {
+            if (v && typeof v === 'object' && !Object.keys(v).length || v === false && (k !== "dm_permission") || v === "" && k != "name" && k != "description" && k != "value" || v?.name == "" && v?.value == "" && copy || k == "type" && v == "1") {
                 // console.log(`${v.name} | ${v.value}`)
                 if (v[k] === "") {
                     delete object[k]
