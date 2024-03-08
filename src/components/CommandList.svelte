@@ -24,14 +24,16 @@
     
     function createCommand() {
         commands = [...commands, { name: "", description: "", dm_permission: false }];
-        command_json = JSON.stringify(commands, null, 4).replace("[", "").replace("]", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "").join("\n")
+        command_json = JSON.stringify(commands, null, 4).replace("[", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "")
+        command_json.pop()
+        command_json = command_json.join("\n")
     }
 
     function updateCommands() {
-        command_json = JSON.stringify(commands, null, 4).replace("[", "").replace("]", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "").join("\n")
+        command_json = JSON.stringify(commands, null, 4).replace("[", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "")
+        command_json.pop()
+        command_json = command_json.join("\n")
     }
-    
-
 
     // console.log(getCommands())
 
