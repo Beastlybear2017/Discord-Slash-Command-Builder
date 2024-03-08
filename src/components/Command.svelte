@@ -138,9 +138,9 @@
                 label="Advanced Options"
                 bind:value={advanced}
             />
-            {#if advanced}
+            <!-- {#if advanced}
                 <Textbox label="GuildID" bind:value={command.guild_id} />
-            {/if}
+            {/if} -->
             <Textbox label="Name *" bind:value={command.name} maxlength={32} />
             {#if advanced}
                 <Localization bind:localizations={command.name_localizations} />
