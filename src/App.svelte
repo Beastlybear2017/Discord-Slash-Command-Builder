@@ -11,6 +11,7 @@
 	on:mousemove={() => {updateIframe()}}
 	on:keypress={async () => {await new Promise(f => setTimeout(f, 10)); updateIframe()}}
 	on:mouseup={async () => {await new Promise(f => setTimeout(f, 10)); updateIframe()}}
+	on:load={() => {updateIframe()}}
 	>
 	<centered>
 		<h1>Slash Command Builder</h1>
