@@ -41,7 +41,7 @@
             title: 'Copied',
             description: '',
             duration: 1500, // 0 or negative to avoid auto-remove
-            placement: 'bottom-right',
+            placement: 'bottom-center',
             theme: 'dark',
             type: 'success',
             onClick: () => {},

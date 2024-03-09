@@ -1,8 +1,17 @@
 <script lang="ts">
 	import CommandList from "./components/CommandList.svelte";
+
+	function updateIframe() {
+		const height = document.getElementsByClassName("command-list-container")[0].scrollHeight + 220
+		window.parent.postMessage({'msg': height + "px"}, "*")
+	}
 </script>
 
-<main >
+<main 
+	on:mousemove={() => {updateIframe()}}
+	on:keypress={async () => {await new Promise(f => setTimeout(f, 10)); updateIframe()}}
+	on:mouseup={async () => {await new Promise(f => setTimeout(f, 10)); updateIframe()}}
+	>
 	<centered>
 		<h1>Slash Command Builder</h1>
 		<h3>* Are Required Fields</h3>
