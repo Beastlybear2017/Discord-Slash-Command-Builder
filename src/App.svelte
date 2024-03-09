@@ -2,7 +2,7 @@
 	import CommandList from "./components/CommandList.svelte";
 
 	function updateIframe() {
-		const height = document.getElementsByClassName("command-list-container")[0].scrollHeight + 220
+		const height = document.getElementsByClassName("command-list-container")[0].scrollHeight + 230
 		window.parent.postMessage({'msg': height + "px"}, "*")
 	}
 </script>
