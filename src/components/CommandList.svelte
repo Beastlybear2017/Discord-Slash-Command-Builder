@@ -32,10 +32,14 @@
     }
 
     // console.log(getCommands())
+    
+    document.addEventListener('copy', evt => {
+        copyJSONToClipboard()
+    });
 
     async function copyJSONToClipboard() { 
 
-        navigator.clipboard.writeText(command_json);
+        navigator.clipboard.writeText(removeFalsy(command_json, true));
 
         const toast = toasts.add({
             title: 'Copied',
@@ -75,7 +79,7 @@
                 // object[dm_permission] = dm_perms
             }
         });
-        return object
+        return JSON.stringify(object, null, 4)
     };
 </script>
 
