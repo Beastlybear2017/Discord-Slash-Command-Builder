@@ -89,29 +89,14 @@
     let advanced = Boolean("")
     $: advanced = advanced || false
 
-    // let options = []
-    // $: if (Array.isArray(command.options)) {
-    //     let i = 0
-    //     for (const option of command?.options) {
-    //         if (i === 0){
-    //             i++
-    //             const name = option.name
-    //             console.log(name)
-    //             if (!options.includes(name) && name) options.push(name)                
-    //         }
-
-    //     }
-    //     console.log(options)
-    // }
-
-
-        
-        // for (const option of command.options) {
-        //     options.push(option.name)
-        //     console.log(option.name)
-        // }
-        
-    let breakLoop: Boolean = false;
+    async function deleteDescription() {
+        return new Promise(resolve => {
+        setTimeout(() => {
+            delete command.description;
+            resolve();
+        }, 1);
+        });
+    }
 </script>
 
 
@@ -164,12 +149,7 @@
             {#if advanced}
                 <Localization bind:localizations={command.name_localizations} />
             {/if}
-            {#if command.type !== 2}
-                {#if !command.description}
-                    {#await command.description = ""}
-                    {/await}  
-                {/if}
-                
+            {#if command.type !== 2}                
                 <Textbox
                     label="Description *"
                     bind:value={command.description}
@@ -177,8 +157,7 @@
                 />
             {:else}
                 {#if command.hasOwnProperty("description")}
-                    {#await delete command.description}
-                    {/await}                
+                    {#await deleteDescription(command)}{/await} 
                 {/if}
 
             {/if}
