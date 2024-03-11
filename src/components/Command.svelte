@@ -149,14 +149,19 @@
             {#if advanced}
                 <Localization bind:localizations={command.name_localizations} />
             {/if}
-            {#if command.type !== 2}                
+            {#if command.type !== 2} 
+                {#if !command.hasOwnProperty("description")}
+                    {#await command.description = ""}<h></h>{/await} 
+                {/if}               
                 <Textbox
                     label="Description *"
                     bind:value={command.description}
                     maxlength={100}
                 />
             {:else}
-            {#}
+                {#if command.hasOwnProperty("description")}
+                    {#await delete command.description}<h></h>{/await} 
+                {/if}
 
             {/if}
             {#if advanced}
