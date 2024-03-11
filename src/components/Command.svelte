@@ -155,6 +155,8 @@
                     bind:value={command.description}
                     maxlength={100}
                 />
+            {:else}
+            {#}
 
             {/if}
             {#if advanced}
