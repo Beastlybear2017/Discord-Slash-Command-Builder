@@ -13,6 +13,8 @@ export interface ApplicationCommand {
     defaultMemberPermissions?: String[],
     dm_permission?: boolean
     version: Snowflake
+    option_names: Partial<ApplicationCommandOption>[]
+    names: String[]
 }
 
 export interface ApplicationCommandOption {

@@ -126,7 +126,7 @@
         z-index: 1;
         border-radius: 0.5em;
         width: 100%;
-        max-height: 13em;
+        max-height: 26em;
         overflow-y: scroll;
 
         .option {

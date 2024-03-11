@@ -12,13 +12,13 @@
     <div
         class="collapsible-header"
         on:mouseup={(e) => {
-            if ((e.target.tagName !== "DIV" && e.target.tagName !== "H2" && e.target.tagName !== "H3") || e.button !== 0) return
+            if ((e.target.tagName !== "DIV" && e.target.tagName !== "H2" && e.target.tagName !== "H3" && e.target.tagName !== "H") || e.button !== 0) return
             collapsed = !collapsed
         }}
         class:collapsed-header={collapsed}
     >
         <Icon name={icon} class="collapse-icon" />
-        <slot name="header" />
+        <slot name="header" name1="option-names"/>
     </div>
     {#if !collapsed}
         <slot name="content" />

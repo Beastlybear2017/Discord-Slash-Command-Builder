@@ -65,29 +65,6 @@
         command.options = [...command.options, { name: "", description: "" }];
     }
 
-    // async function copyJSONToClipboard() {
-    //     let commandJson
-    //     try {
-    //       commandJson =  removeFalsy(command_json, true) 
-    //     } catch (error) {
-    //         console.log(error)
-    //         return            
-    //     }
-    //     navigator.clipboard.writeText(JSON.stringify(commandJson, null, 4));
-
-    //     const toast = toasts.add({
-    //         title: 'Copied',
-    //         description: 'The Commands have been copied to your clipboard :)',
-    //         duration: 3000, // 0 or negative to avoid auto-remove
-    //         placement: 'top-center',
-    //         theme: 'dark',
-    //         type: 'success',
-    //         onClick: () => {},
-    //         onRemove: () => {},
-    //         // component: BootstrapToast, // allows to override toast component/template per toast
-    //     });
-    // }
-
     let commandTypes = buildOptionsFromEnum(ApplicationCommandType);
 
     let defaultCommandType = 0;
@@ -103,7 +80,7 @@
     $: command.guild_id = (command?.guild_id?.replace(/[^0-9]/g, '')) || ""
 
     command.name = command.name 
-    $: command.name = command.name.toLocaleLowerCase().replace(/[^a-z0-9-_]/g, '')
+    $: command.name = command.name.toLocaleLowerCase().replace(" ", "-").replace(/[^a-z0-9-_]/g, '')
     
 
     command.dm_permission = command.dm_permission
@@ -112,6 +89,29 @@
     let advanced = Boolean("")
     $: advanced = advanced || false
 
+    // let options = []
+    // $: if (Array.isArray(command.options)) {
+    //     let i = 0
+    //     for (const option of command?.options) {
+    //         if (i === 0){
+    //             i++
+    //             const name = option.name
+    //             console.log(name)
+    //             if (!options.includes(name) && name) options.push(name)                
+    //         }
+
+    //     }
+    //     console.log(options)
+    // }
+
+
+        
+        // for (const option of command.options) {
+        //     options.push(option.name)
+        //     console.log(option.name)
+        // }
+        
+    let breakLoop: Boolean = false;
 </script>
 
 
@@ -123,7 +123,27 @@
 <div class="command-container">
     <Collapsible>
         <div class="container-header" slot="header">
-            <h2 class="heading">Command</h2>
+            <h2 class="heading">/ {command.name || "command"}<h>{"   "}
+                {#if command?.options?.[0]}
+                    {#each command?.options as option}
+                        {#if option.required}
+                            <h> </h>
+                            <required>{option.name}</required>
+                        {/if}
+                        
+                    {/each}
+                    {#if ((command?.options?.map(o => o).filter(r => !r.required && r.name)).toString() != "")}
+                        <optional-text> | Optional</optional-text>
+                    {/if}
+                    {#each command?.options as option}
+                        {#if !option.required}
+                            <h> </h>
+                            <optional>{option.name}</optional>
+                        {/if}
+                    {/each}
+                {/if}
+                
+            
             <div
                 class="delete-icon-wrapper"
                 on:click={() => dispatch("remove")}
@@ -144,11 +164,24 @@
             {#if advanced}
                 <Localization bind:localizations={command.name_localizations} />
             {/if}
-            <Textbox
-                label="Description *"
-                bind:value={command.description}
-                maxlength={100}
-            />
+            {#if command.type !== 2}
+                {#if !command.description}
+                    {#await command.description = ""}
+                    {/await}  
+                {/if}
+                
+                <Textbox
+                    label="Description *"
+                    bind:value={command.description}
+                    maxlength={100}
+                />
+            {:else}
+                {#if command.hasOwnProperty("description")}
+                    {#await delete command.description}
+                    {/await}                
+                {/if}
+
+            {/if}
             {#if advanced}
                 <Localization
                     bind:localizations={command.description_localizations}
@@ -214,17 +247,36 @@
 
         .container-header {
             width: 100%;
+            height: 3em;        
+            
+
         }
 
         .content {
             padding: 1em;
         }
+    }        
+    
+    required:not(:empty){
+        font-size: medium;
+        background-color: #5865f2;
+        border-radius: 0.2em;
+        padding: 0.1em 0.5em;
+    }
 
+    optional:not(:empty){
+        font-size: medium;
+        background-color: #4b4c4d;
+        border-radius: 0.2em;
+        padding: 0.1em 0.5em;
+    }
 
+    optional-text {
+        color: #4b4c4d;
     }
 
     .command-options {
-        margin: 1em 0;
+        margin: 1em;
     }
 
     // .output-json-container {

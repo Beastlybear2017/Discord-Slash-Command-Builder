@@ -31,12 +31,6 @@
         command_json = command_json.join("\n").replace("    ]", "]")
     }
 
-    // console.log(getCommands())
-    
-    document.addEventListener('copy', evt => {
-        copyJSONToClipboard()
-    });
-
     async function copyJSONToClipboard() { 
 
         navigator.clipboard.writeText(removeFalsy(command_json, true));
@@ -106,7 +100,7 @@
         </div>
     {/if}
     <ToastContainer let:data={data}>
-        <FlatToast {data} /> <!-- Provider template for your toasts -->
+        <FlatToast {data} />
     </ToastContainer>
 </div>
 

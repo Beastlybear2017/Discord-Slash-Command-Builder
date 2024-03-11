@@ -7,18 +7,19 @@ export let maxlength = -1;
 
 export function handleOutEvent(event) {
     const val = (event.target as HTMLInputElement).value;
-    var target_type = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("collapsible-header")[0]?.getElementsByClassName("container-header")[0].getElementsByClassName("heading")[0].innerHTML || event.currentTarget.parentNode.parentNode.parentNode.getElementsByClassName("container-header")[0]?.getElementsByClassName("heading")[0]?.innerHTML || event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("label")[0].innerHTML
+    var target_type = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("collapsible-header")[0]?.getElementsByClassName("container-header")[0].getElementsByClassName("heading")[0].localName || event.currentTarget.parentNode.parentNode.parentNode.getElementsByClassName("container-header")[0]?.getElementsByClassName("heading")[0]?.localName || event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("label")[0].localName
+
     switch (target_type) {
-        case "Command":
+        case "h2":
             target_type = "A Command"
             break
-        case "Option":
+        case "h3":
             target_type = "An Option"
             break
-        case "Choice":
+        case "h4":
             target_type = "A Choice"
             break
-        case "Localization":
+        case "undefined":
             target_type = "A Localized"
     }
 
@@ -78,7 +79,7 @@ export function handleOutEvent(event) {
             break
 
         default:
-            console.log("Default")
+            console.log(target_name)
             event.target.style.border = "2px solid var(--input-border)"
             break
     }
