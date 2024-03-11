@@ -155,10 +155,6 @@
                     bind:value={command.description}
                     maxlength={100}
                 />
-            {:else}
-                {#if command.hasOwnProperty("description")}
-                    {#await deleteDescription(command)}{/await} 
-                {/if}
 
             {/if}
             {#if advanced}
