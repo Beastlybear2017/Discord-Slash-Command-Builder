@@ -189,28 +189,30 @@
                     />
                 {/if}
             {/if}
-            <div class="command-options">
-                {#if command.options}
-                    {#each command.options as option, i}
-                        <CommandOption
-                            bind:option
-                            on:remove={() => {
-                                command.options.splice(i, 1);
-                                if (command.options.length === 0) {
-                                    command.options = undefined;
-                                } else {
-                                    command.options = command.options;
-                                }                
-                            }}
-                        />
-                    {/each}
-                {/if}
-            </div>
-            <div class="button-bar" id="add-command-button">
-                <button on:click={addOption}>
-                    <Icon name="add" class="btn-icon" />Add Option
-                </button>
-            </div>
+            {#if (command.type !== 2) && (command.type !== 3)} 
+                <div class="command-options">
+                    {#if command.options}
+                        {#each command.options as option, i}
+                            <CommandOption
+                                bind:option
+                                on:remove={() => {
+                                    command.options.splice(i, 1);
+                                    if (command.options.length === 0) {
+                                        command.options = undefined;
+                                    } else {
+                                        command.options = command.options;
+                                    }                
+                                }}
+                            />
+                        {/each}
+                    {/if}
+                </div>
+                <div class="button-bar" id="add-command-button">
+                    <button on:click={addOption}>
+                        <Icon name="add" class="btn-icon" />Add Option
+                    </button>
+                </div>
+            {/if}
             <!-- <div class="output-json-container">
                 <Highlight language={json} code={command_json} />
                 <button class="copy-button" on:click={copyJSONToClipboard}>
