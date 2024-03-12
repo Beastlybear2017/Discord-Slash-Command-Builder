@@ -189,7 +189,7 @@
                     />
                 {/if}
             {/if}
-            {#if (command.type !== 2) && (command.type !== 3)} 
+            {#if (command.type !== 2) && (command.type !== 3)}
                 <div class="command-options">
                     {#if command.options}
                         {#each command.options as option, i}
@@ -212,6 +212,10 @@
                         <Icon name="add" class="btn-icon" />Add Option
                     </button>
                 </div>
+            {:else}
+                {#if command.hasOwnProperty("options")}
+                    {#await delete command.options}<h></h>{/await} 
+                {/if}  
             {/if}
             <!-- <div class="output-json-container">
                 <Highlight language={json} code={command_json} />
