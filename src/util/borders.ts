@@ -7,7 +7,8 @@ export let maxlength = -1;
 
 export function handleOutEvent(event) {
     const val = (event.target as HTMLInputElement).value;
-    var target_type = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("collapsible-header")[0]?.getElementsByClassName("container-header")[0].getElementsByClassName("heading")[0].localName || event.currentTarget.parentNode.parentNode.parentNode.getElementsByClassName("container-header")[0]?.getElementsByClassName("heading")[0]?.localName || event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("label")[0].localName
+    var target_type = document.querySelector('.heading').localName|| document.querySelector('.label').localName
+    var command_type = document.querySelector('.select-input').textContent.trim()
 
     switch (target_type) {
         case "h2":
@@ -19,7 +20,7 @@ export function handleOutEvent(event) {
         case "h4":
             target_type = "A Choice"
             break
-        case "undefined":
+        case "span":
             target_type = "A Localized"
     }
 
@@ -28,11 +29,15 @@ export function handleOutEvent(event) {
     switch (target_name) {
         case "Name *": 
             if (target_type !== "A Choice") {
-                if (val.match(/([^a-z0-9-_])+/g) || (event.target as HTMLInputElement).value.match(/(^$)/g) ) {
-                    showError(event, "error", `${target_type} Name is Required`)
+                if (command_type == "Chat Input") {
+                    if (val.match(/([^a-z0-9-_])+/g) || (event.target as HTMLInputElement).value.match(/(^$)/g) ) {
+                        showError(event, "error", `${target_type} Name is Required`)
+                    } else {
+                        showError(event)
+                    }
                 } else {
-                    showError(event)
-                }                 
+                        showError(event)
+                    }                
             } else {
                 if (val.match(/(^$)/g)) {
                     showError(event, "error", `${target_type} Name is Required`)

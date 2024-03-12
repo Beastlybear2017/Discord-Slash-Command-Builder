@@ -80,7 +80,7 @@
     $: command.guild_id = (command?.guild_id?.replace(/[^0-9]/g, '')) || ""
 
     command.name = command.name 
-    $: command.name = command.name.toLocaleLowerCase().replace(" ", "-").replace(/[^a-z0-9-_]/g, '')
+    $: if (!command.hasOwnProperty("type")) {command.name = command.name.toLocaleLowerCase().replace(" ", "-").replace(/[^a-z0-9-_]/g, '')} else {command.name = command.name}
     
 
     command.dm_permission = command.dm_permission
@@ -149,7 +149,7 @@
             {#if advanced}
                 <Localization bind:localizations={command.name_localizations} />
             {/if}
-            {#if command.type !== 2} 
+            {#if (command.type !== 2) && (command.type !== 3)} 
                 {#if !command.hasOwnProperty("description")}
                     {#await command.description = ""}<h></h>{/await} 
                 {/if}               

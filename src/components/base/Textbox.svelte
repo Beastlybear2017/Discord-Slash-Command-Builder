@@ -7,10 +7,11 @@
     export let maxlength = -1;
     import { handleInEvent, handleOutEvent, showError } from "../../util/borders"  
 
-    export function handleInput(event) {
+    export function handleInput(event, command: Object) {
         const val = (event.target as HTMLInputElement).value;
-        var target_type = event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("collapsible-header")[0]?.getElementsByClassName("container-header")[0].getElementsByClassName("heading")[0].localName || event.currentTarget.parentNode.parentNode.parentNode.getElementsByClassName("container-header")[0]?.getElementsByClassName("heading")[0]?.localName || event.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.getElementsByClassName("label")[0].localName
-
+        var target_type = document.querySelector('.heading').localName|| document.querySelector('.label').localName
+        var command_type = document.querySelector('.select-input').textContent.trim()
+        
         switch (target_type) {
             case "h2":
                 target_type = "A Command"
@@ -21,7 +22,7 @@
             case "h4":
                 target_type = "A Choice"
                 break
-            case "undefined":
+            case "span":
                 target_type = "A Localized"
         }
         
@@ -31,15 +32,20 @@
         switch (target_name) {
             case "Name *": 
                 if (target_type !== "A Choice") {
-                    if (val.match(/(^$)/g) ) {
-                        showError(event, "error", `${target_type} Name is Required`)
-                    } else if (val.match(/([A-Z])/g)){
-                        showError(event, "error", `${target_type} Name can not contain Capital Letters`)
-                    } else if (val.match(/([^a-z0-9-_])/g)){
-                        showError(event, "error", `${target_type} Name can only contain Letters, Numbers, Underscores and Dashes`)
+                    if (command_type == "Chat Input") {
+                        if (val.match(/(^$)/g) ) {
+                            showError(event, "error", `${target_type} Name is Required`)
+                        } else if (val.match(/([A-Z])/g)){
+                            showError(event, "error", `${target_type} Name can not contain Capital Letters`)
+                        } else if (val.match(/([^a-z0-9-_])/g)){
+                            showError(event, "error", `${target_type} Name can only contain Letters, Numbers, Underscores and Dashes`)
+                        } else {
+                            showError(event)
+                        }                          
                     } else {
                         showError(event)
-                    }                     
+                    }
+                   
                 } else {
                     if (val.match(/(^$)/g) ) {
                         showError(event, "error", `${target_type} Name is Required`)
