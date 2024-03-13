@@ -53,6 +53,7 @@
             if (index === -1) {
                 currentIndices = [...currentIndices, i];
                 const element = Array.from(document.getElementsByClassName("option-false")).filter(e => e.innerText == options[i].display)[0]
+                console.log(element.className)
                 element.className = element.className.replace("false", "true")
                 selected.push(options[i])
             } else {
