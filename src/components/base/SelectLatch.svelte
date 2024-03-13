@@ -53,14 +53,13 @@
             if (index === -1) {
                 currentIndices = [...currentIndices, i];
                 const element = Array.from(document.getElementsByClassName("option-false")).filter(e => e.innerText == options[i].display)[0]
-                console.log(element.className)
                 element.className = element.className.replace("false", "true")
                 selected.push(options[i])
             } else {
                 currentIndices.splice(index, 1);
                 currentIndices = currentIndices;
                 const element = Array.from(document.getElementsByClassName("option-true")).filter(e => e.innerText == options[i].display)[0]
-                element.className = element.className.replace("true", "false")
+                element.className = element?.className?.replace("true", "false")
                 selected = selected.filter(s => s !== options[i])
             }
             dispatch("selectionChanged", {
@@ -98,7 +97,7 @@
         {#if opened}
             <div class="select-options" bind:this={optionsElements}>
                 {#each options as option, i}
-                    {#await selected.includes(option) ? selected1 = true : selected1 = false, console.log(selected1) }
+                    {#await selected.includes(option) ? selected1 = true : selected1 = false, console.log(selected1)}
                     <d></d>
                     {/await}
                     <div class="option-{selected1}" on:mouseup={() => handleSelection(i)}>
