@@ -31,6 +31,8 @@
     }
 
     let opened = false;
+    let selected = []
+    let selected1 = false
 
     let selectElement: HTMLElement;
     let optionsElements: HTMLElement;
@@ -50,9 +52,16 @@
             const index = currentIndices.findIndex((x) => x === i);
             if (index === -1) {
                 currentIndices = [...currentIndices, i];
+                const element = Array.from(document.getElementsByClassName("option-false")).filter(e => e.innerText == options[i].display)[0]
+                element.className = element.className.replace("false", "true")
+                selected.push(options[i])
+                console.log(selected)
             } else {
                 currentIndices.splice(index, 1);
                 currentIndices = currentIndices;
+                const element = Array.from(document.getElementsByClassName("option-true")).filter(e => e.innerText == options[i].display)[0]
+                element.className = element.className.replace("true", "false")
+                selected = selected.filter(s => s !== options[i])
             }
             dispatch("selectionChanged", {
                 values: options.filter(
@@ -80,19 +89,26 @@
     {#if label != undefined}
         <span class="input-label">{label}</span>
     {/if}
-    <div class="select-input" on:mouseup={() => (opened = !opened)} >
+    <div1 class="select-input-latch" on:mouseup={(e) => {
+        if (e.target.tagName !== "DIV1") return
+        opened = !opened
+    }} >
         {formattedText}
         <Icon name="chevron_down" class="select-chevron" />
         {#if opened}
             <div class="select-options" bind:this={optionsElements}>
                 {#each options as option, i}
-                    <div class="option" on:mouseup={() => handleSelection(i)}>
+                    {#await selected.includes(option) ? selected1 = true : selected1 = false}
+                    <d></d>
+                    {/await}
+                    <div class="option-{selected1}" on:mouseup={() => handleSelection(i)}>
                         {option.display}
                     </div>
+                    
                 {/each}
             </div>
         {/if}
-    </div>
+    </div1>
 </div>
 
 <style lang="scss">
@@ -101,7 +117,7 @@
         background-color: transparent;
     }
 
-    .select-input {
+    .select-input-latch {
         background: var(--background-color-brighter);
         padding: 0.8em;
         color: var(--input-text-color);
@@ -128,8 +144,10 @@
         width: 100%;
         max-height: 26em;
         overflow-y: auto;
+        margin: 0.3em 0;
+        border: 2px solid var(--input-border);
 
-        .option {
+        .option-false {
             width: calc(100% - 1em);
             padding: 1em 0.5em;
             cursor: pointer;
@@ -146,6 +164,30 @@
 
             &:hover {
                 background: rgb(255, 255, 255, 0.05);
+            }
+        }
+
+        .option-true {
+            width: calc(100% - 1em);
+            padding: 1em 0.5em;
+            cursor: pointer;
+            background: var(--primary-color-darker);
+            color: var(--text-color);
+            border-top: 1px solid var(--input-border);
+            border-bottom: 1px solid var(--input-border);
+
+            // &:first-child {
+            //     border-top-left-radius: 0.5em;
+            //     border-top-right-radius: 0.5em;
+            // }
+
+            // &:last-child {
+            //     border-bottom-left-radius: 0.5em;
+            //     border-bottom-right-radius: 0.5em;
+            // }
+
+            &:hover {
+                background: var(--primary-color);
             }
         }
     }

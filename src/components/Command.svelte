@@ -15,6 +15,7 @@
     import Checkbox from "./base/Checkbox.svelte";
     import Collapsible from "./base/Collapsible.svelte";
     import Select from "./base/Select.svelte";
+    import SelectLatch from "./base/SelectLatch.svelte";
     import Textbox from "./base/Textbox.svelte";
     import CommandOption from "./CommandOption.svelte";
     import Icon from "./Icon.svelte";
@@ -175,7 +176,7 @@
                 bind:currentIndex={defaultCommandType}
             />
             {#if advanced}
-                <Select
+                <SelectLatch
                     label="Permissions"
                     options={permissions}
                     selectionMode="multiple"

@@ -39,17 +39,17 @@ export interface ApplicationCommandOptionChoice {
 }
 
 export enum ApplicationCommandOptionType {
-    SUB_COMMAND = 1,
     SUB_COMMAND_GROUP = 2,
+    SUB_COMMAND = 1,
     STRING = 3,
-    INTEGER = 4,
+    NUMBER = 10,
     BOOLEAN = 5,
     USER = 6,
     CHANNEL = 7,
     ROLE = 8,
-    MENTIONABLE = 9,
-    NUMBER = 10,
+    INTEGER = 4,
     ATTACHMENT = 11,
+    MENTIONABLE = 9,
 }
 
 export enum ChannelType {

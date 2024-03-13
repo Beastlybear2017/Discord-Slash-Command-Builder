@@ -113,7 +113,7 @@
     option.max_value = null
 
     option.name = option.name || ""
-    $: option.name = option?.name?.toLocaleLowerCase().replace(" ", "-").replace(/[^a-z0-9-_]/g, '')
+    $: option.name = option?.name?.toLowerCase().replace(/[^a-z0-9-_]/g, '')
 
     let advanced = Boolean("")
     $: advanced = advanced || false
@@ -128,7 +128,7 @@
 <div class="command-option-container">
     <Collapsible>
         <div class="container-header" slot="header">
-            <h3 class="heading">{option.name || "Option"}</h3>
+            <h3 class="heading">Option</h3>
             <div
                 class="delete-icon-wrapper"
                 on:click={() => dispatch("remove")}
@@ -213,7 +213,12 @@
                 />
             {/if}
             {#if option.type === ApplicationCommandOptionType.NUMBER || option.type === ApplicationCommandOptionType.INTEGER || option.type === ApplicationCommandOptionType.STRING}
-
+                {#if option.choices == undefined || option.choices.length == 0}
+                    <Checkbox
+                        label="Autocomplete"
+                        bind:value={option.autocomplete}
+                    />
+                {/if}
                 {#if option.choices}
                     <div class="option-choice-list">
                         {#each option.choices as choice, i}
@@ -231,14 +236,6 @@
                             />
                         {/each}
                     </div>
-                {/if}                
-                {#if option.choices == undefined || option.choices.length == 0}
-                    {#if advanced}
-                    <Checkbox
-                        label="Autocomplete"
-                        bind:value={option.autocomplete}
-                    />
-                    {/if}
                 {/if}
                 <div class="button-bar">
                     <button on:click={addOptionChoice}>
