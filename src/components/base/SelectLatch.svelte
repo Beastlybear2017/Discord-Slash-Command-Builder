@@ -97,7 +97,7 @@
         {#if opened}
             <div class="select-options" bind:this={optionsElements}>
                 {#each options as option, i}
-                    {#await selected.includes(option) ? selected1 = true : selected1 = false}<d></d>{/await}
+                    {#await selected.includes(option) ? selected1 = "true" : selected1 = "false"}<d></d>{/await}
                     <div class="option-{selected1}" on:mouseup={() => handleSelection(i)}>
                         {option.display}
                     </div>
