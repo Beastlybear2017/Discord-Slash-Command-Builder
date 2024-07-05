@@ -1,8 +1,5 @@
 
 <script lang="ts">
-    export function getCommands() {
-        alert("a")
-    }    
     import { Highlight } from "svelte-highlight";
     import type { ApplicationCommand } from "../models/app_command";
     import Command from "./Command.svelte";
@@ -22,13 +19,13 @@
     
     function createCommand() {
         commands = [...commands, { name: "", description: "", dm_permission: false }];
-        command_json = JSON.stringify(commands, null, 4).replace("[", "").replace("]", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`)
+        command_json = JSON.stringify(commands, null, 2)
     }
 
     function updateCommands() {
-        command_json = JSON.stringify(commands, null, 4).replace("[", "").replaceAll("    {", "{").replaceAll("    }", "}").replaceAll(`    "`, `"`).split("\n").filter(l => l.trim() !== "")
+        command_json = JSON.stringify(commands, null, 2).split("\n").filter(l => l.trim() !== "")
         command_json.pop()
-        command_json = command_json.join("\n").replace("    ]", "]")
+        command_json = command_json.join("\n")
     }
 
     async function copyJSONToClipboard() { 

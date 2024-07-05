@@ -7,21 +7,28 @@ export let maxlength = -1;
 
 export function handleOutEvent(event) {
     const val = (event.target as HTMLInputElement).value;
-    var target_type = document.querySelector('.heading').localName|| document.querySelector('.label').localName
+    var target_type = event.target.parentElement.parentElement.parentElement.classList[1].split("-")[0]
     var command_type = document.querySelector('.select-input').textContent.trim()
 
     switch (target_type) {
-        case "h2":
+        case "command":
             target_type = "A Command"
             break
-        case "h3":
-            target_type = "An Option"
+        case "option1":
+            target_type = "A Sub Command"
             break
-        case "h4":
+        case "option2":
+            target_type = "A Sub Command Group"
+            break
+        case "choice":
             target_type = "A Choice"
             break
-        case "span":
+        case "svelte":
             target_type = "A Localized"
+            break
+        default:
+            target_type = "An Option"
+            break
     }
 
     const target_name = String(event.target.name) || String(target_type)
@@ -84,7 +91,6 @@ export function handleOutEvent(event) {
             break
 
         default:
-            console.log(target_name)
             event.target.style.border = "2px solid var(--input-border)"
             break
     }

@@ -24,9 +24,9 @@
     }
 </script>
 
-<div class="command-choice-container">
+<div class="command-choice-container choice">
     <div class="container-header">
-        <h4 class="heading">Choice</h4>
+        <h4 class="heading">choice
         <div class="delete-icon-wrapper" on:click={() => dispatch("remove")} on:keyup={() => {}}>
             <Icon name="delete" class="delete-icon" />
         </div>

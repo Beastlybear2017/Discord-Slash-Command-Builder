@@ -1,6 +1,3 @@
-<script lang="ts" context="module">
-  
-</script>
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Highlight from "svelte-highlight";
@@ -8,6 +5,7 @@
     import atomOneDark from "svelte-highlight/styles/atom-one-dark";
     import {
         ApplicationCommand,
+        ApplicationCommandOptionType,
         ApplicationCommandType,
         Permissions
     } from "../models/app_command";
@@ -112,11 +110,12 @@
             <h2 class="heading">/ {command.name || "command"}<h>{"   "}
                 {#if command?.options?.[0]}
                     {#each command?.options as option}
-                        {#if option.required}
-                            <h> </h>
-                            <required>{option.name}</required>
+                        {#if !option.type == ApplicationCommandOptionType.SUB_COMMAND_GROUP || ApplicationCommandOptionType.SUB_COMMAND }
+                            {#if option.required}
+                                <h> </h>
+                                <required>{option.name}</required>
+                            {/if}
                         {/if}
-                        
                     {/each}
                     {#if ((command?.options?.map(o => o).filter(r => !r.required && r.name)).toString() != "")}
                         <optional-text> | Optional</optional-text>
@@ -138,7 +137,7 @@
                 <Icon name="delete" class="delete-icon" />
             </div>   
         </div>
-        <div class="content" slot="content">
+        <div class="content command" slot="content">
             <Checkbox
                 label="Advanced Options"
                 bind:value={advanced}
@@ -245,7 +244,11 @@
             padding: 1em;
         }
     }        
-    
+
+    div.command-container:hover {
+        box-shadow: 0px 0px 10px 3px #5865f2;
+    }
+ 
     required:not(:empty){
         font-size: medium;
         background-color: #5865f2;

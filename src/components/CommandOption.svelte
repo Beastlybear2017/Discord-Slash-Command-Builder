@@ -48,6 +48,13 @@
         option.options = [...option.options, { name: "", description: "" }];
     }
 
+    function addSubCommand() {
+        if (!option.options) {
+            option.options = [];
+        }
+        option.options = [...option.options, { name: "", description: "", type: 1 }];
+    }
+
     function addOptionChoice() {
         if (!option.choices) {
             option.choices = [];
@@ -94,13 +101,21 @@
         ) {
             opt.channel_types = undefined;
         }
+
+        if (opt.type == ApplicationCommandOptionType.SUB_COMMAND || opt.type == ApplicationCommandOptionType.SUB_COMMAND_GROUP) {
+            delete opt.required
+        } else {
+            opt.required = true
+        }
     }
 
     let commandOptionTypes = buildOptionsFromEnum(ApplicationCommandOptionType);
 
     let channelTypes = buildOptionsFromEnum(ChannelType);
 
-    let defaultOptionType = 2;
+    let manualType = Number(option.type) || undefined
+
+    let defaultOptionType = option.type || 2;
     $: option.type = commandOptionTypes[defaultOptionType].value;
     $: cleanUpOption(option);
 
@@ -126,9 +141,9 @@
 </script>
 
 <div class="command-option-container">
-    <Collapsible>
+    <Collapsible >
         <div class="container-header" slot="header">
-            <h3 class="heading">Option</h3>
+            <h3 class="heading">{ option.name || (ApplicationCommandOptionType[option.type]).toLocaleLowerCase().replaceAll("_", " ")}</h3>
             <div
                 class="delete-icon-wrapper"
                 on:click={() => dispatch("remove")}
@@ -140,103 +155,129 @@
   
         <div class="content" slot="content">
 
-            <div class="command-option-info">
+            <div class="command-option-info option{option.type}">
                 <Checkbox
                     label="Advanced Options"
                     bind:value={advanced}
                 />      
                 <Textbox label="Name *" bind:value={option.name} maxlength={32} />
                 {#if advanced}
-                <Localization bind:localizations={option.name_localizations} />
+                    <Localization bind:localizations={option.name_localizations} />
                 {/if}
-                <Textbox
-                    label="Description *"
-                    bind:value={option.description}
-                    maxlength={100}
-                />
-                {#if advanced}
-                <Localization bind:localizations={option.description_localizations} />
-                {/if}
-                <Checkbox label="Required" bind:value={option.required} />
-                <Select
-                    label="Type"
-                    options={commandOptionTypes}
-                    bind:currentIndex={defaultOptionType}
-                />
-            </div>
-            {#if option.type === ApplicationCommandOptionType.SUB_COMMAND || option.type === ApplicationCommandOptionType.SUB_COMMAND_GROUP}
-                {#if option.options}
-                    {#each option.options as child_option, i}
-                        <svelte:self
-                            option={child_option}
-                            on:remove={() => {
-                                option.options.splice(i, 1);
-                                if (option.options.length === 0) {
-                                    option.options = undefined;
-                                } else {
-                                    option.options = option.options;
-                                }  
-                            }}
-                        />
-                    {/each}
-                {/if}
-                <div class="button-bar">
-                    <button on:click={addOption}>
-                        <Icon name="add" class="btn-icon" />Add Option
-                    </button>
-                </div>
-            {/if}
-            {#if option.type === ApplicationCommandOptionType.CHANNEL}
-                <Select
-                    label="Channel Type"
-                    options={channelTypes}
-                    selectionMode="multiple"
-                    on:selectionChanged={handleChannelTypeSelectionChanged}
-                />
-            {/if}
-            {#if option.type === ApplicationCommandOptionType.NUMBER || option.type === ApplicationCommandOptionType.INTEGER}
-                <Textbox
-                    label="Min Value"
-                    input_type={option.type ===
-                    ApplicationCommandOptionType.NUMBER
-                        ? "integer"
-                        : "float"}
-                    bind:value={option.min_value}
-                />
-                <Textbox
-                    label="Max Value"
-                    input_type={option.type ===
-                    ApplicationCommandOptionType.NUMBER
-                        ? "integer"
-                        : "float"}
-                    bind:value={option.max_value}
-                />
-            {/if}
-            {#if option.type === ApplicationCommandOptionType.NUMBER || option.type === ApplicationCommandOptionType.INTEGER || option.type === ApplicationCommandOptionType.STRING}
-                {#if option.choices == undefined || option.choices.length == 0}
-                    <Checkbox
-                        label="Autocomplete"
-                        bind:value={option.autocomplete}
+                    <Textbox
+                        label="Description *"
+                        bind:value={option.description}
+                        maxlength={100}
                     />
+                {#if advanced}
+                    <Localization bind:localizations={option.description_localizations} />
                 {/if}
-                {#if option.choices}
-                    <div class="option-choice-list">
-                        {#each option.choices as choice, i}
-                            <CommandOptionChoice
-                                bind:choice
-                                bind:optionType={option.type}
+                {#if !(option.type == ApplicationCommandOptionType.SUB_COMMAND || option.type === ApplicationCommandOptionType.SUB_COMMAND_GROUP)}
+                    <Checkbox label="Required" bind:value={option.required} />
+                {/if}
+                {#if manualType !== 1}
+                    <Select
+                        label="Type"
+                        options={commandOptionTypes}
+                        bind:currentIndex={defaultOptionType}
+                    />    
+                {/if}
+                </div>
+                {#if option.type === ApplicationCommandOptionType.SUB_COMMAND}
+                    {#if option.options}
+                        {#each option.options as child_option, i}
+                            <svelte:self
+                                option={child_option}
                                 on:remove={() => {
-                                    option.choices.splice(i, 1);
-                                    if (option.choices.length === 0) {
-                                        option.choices = undefined;
+                                    option.options.splice(i, 1);
+                                    if (option.options.length === 0) {
+                                        option.options = undefined;
                                     } else {
-                                        option.choices = option.choices;
-                                    }
+                                        option.options = option.options;
+                                    }  
                                 }}
                             />
                         {/each}
+                    {/if}
+                    <div class="button-bar">
+                        <button on:click={addOption}>
+                            <Icon name="add" class="btn-icon" />Add Option
+                        </button>
                     </div>
                 {/if}
+                {#if option.type === ApplicationCommandOptionType.SUB_COMMAND_GROUP}
+                    {#if option.options}
+                        {#each option.options as child_option, i}
+                            <svelte:self
+                                option={child_option}
+                                on:remove={() => {
+                                    option.options.splice(i, 1);
+                                    if (option.options.length === 0) {
+                                        option.options = undefined;
+                                    } else {
+                                        option.options = option.options;
+                                    }  
+                                }}
+                            />
+                        {/each}
+                    {/if}
+                    <div class="button-bar">
+                        <button on:click={addSubCommand}>
+                            <Icon name="add" class="btn-icon" />Add Sub Command
+                        </button>
+                    </div>
+                {/if}
+                {#if option.type === ApplicationCommandOptionType.CHANNEL}
+                    <Select
+                        label="Channel Type"
+                        options={channelTypes}
+                        selectionMode="multiple"
+                        on:selectionChanged={handleChannelTypeSelectionChanged}
+                    />
+                {/if}
+                {#if (option.type === ApplicationCommandOptionType.NUMBER || option.type === ApplicationCommandOptionType.INTEGER) && advanced }
+                    <Textbox
+                        label="Min Value"
+                        input_type={option.type ===
+                        ApplicationCommandOptionType.NUMBER
+                            ? "integer"
+                            : "float"}
+                        bind:value={option.min_value}
+                    />
+                    <Textbox
+                        label="Max Value"
+                        input_type={option.type ===
+                        ApplicationCommandOptionType.NUMBER
+                            ? "integer"
+                            : "float"}
+                        bind:value={option.max_value}
+                    />
+                {/if}
+                {#if option.type === ApplicationCommandOptionType.NUMBER || option.type === ApplicationCommandOptionType.INTEGER || option.type === ApplicationCommandOptionType.STRING}
+                    {#if (option.choices == undefined || option.choices.length == 0) && advanced}
+                        <Checkbox
+                            label="Autocomplete"
+                            bind:value={option.autocomplete}
+                        />
+                    {/if}
+                    {#if option.choices}
+                        <div class="option-choice-list">
+                            {#each option.choices as choice, i}
+                                <CommandOptionChoice
+                                    bind:choice
+                                    bind:optionType={option.type}
+                                    on:remove={() => {
+                                        option.choices.splice(i, 1);
+                                        if (option.choices.length === 0) {
+                                            option.choices = undefined;
+                                        } else {
+                                            option.choices = option.choices;
+                                        }
+                                    }}
+                                />
+                            {/each}
+                        </div>
+                    {/if}
                 <div class="button-bar">
                     <button on:click={addOptionChoice}>
                         <Icon name="add" class="btn-icon" />Add Option Choice
@@ -267,5 +308,9 @@
         flex-wrap: wrap;
         margin: 1em 0;
         gap: 1em;
+    }
+
+    .command-option-container:hover {
+        box-shadow: 0px 0px 10px 3px #575757 !important;
     }
 </style>
