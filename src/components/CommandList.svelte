@@ -23,7 +23,7 @@
     }
 
     function updateCommands() {
-        command_json = JSON.stringify(commands, null, 2).split("\n").filter(l => l.trim() !== "")
+        command_json = JSON.stringify(commands, null, 2).split("\n").map(line => line.replace(/^ {2}/, "")).slice(1).filter(l => l.trim() !== "")
         command_json.pop()
         command_json = command_json.join("\n")
     }
